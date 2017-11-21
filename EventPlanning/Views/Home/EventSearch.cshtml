@@ -1,0 +1,11 @@
+﻿@model IEnumerable<EventPlanning.Models.Event>
+
+@foreach (var eventPlan in Model)
+{
+    <div class="alert alert-info" role="alert">
+        <p>Наименование события: @eventPlan.Name</p>
+        <p>Дата события: @eventPlan.Date</p>
+        <p><a href="/Home/AboutEvent/@eventPlan.Id">Подробнее</a></p>
+        <br />
+    </div>
+}

@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "New event";
+}
+
+<div>
+    <h3>Форма создания нового события</h3>
+    <p style="color: red" id="error"></p>
+    <form method="post" action="/Home/CreateNewEvent" onsubmit="return IsValid();">
+        <label for="Name">Наименование события: </label>
+        <input type="text" id="Name" name="name" /><br>
+        <label for="Date">Дата события: </label>
+        <input type="text" id="Date" name="date" placeholder="@DateTime.Now.ToString()" /><br>
+        <label for="MaxUsers">Максимальное кол-во подписчиков: </label>
+        <input type="text" id="MaxUsers" name="MaxUsers" value="99999" placeholder="0-99999" pattern="\d{1,5}"/><br>
+        <descriptions>
+            
+        </descriptions>
+        <input id="AddAction" type="button" value="Добавить описание"><br />
+        <input id="Send" type="submit" value="Создать" /><br />
+    </form>
+</div>
+<script type="text/javascript">
+    var index = 0;
+    var pattern = /\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}/;
+    $(function(){
+        $('#AddAction').on('click', function (e) {
+            index += 1;
+            $(' <label for="NameDescription' + index + '" id="labelNameDescription' + index + '">Наименование описания: </label>').appendTo('descriptions');
+            $(' <input type="text" id="NameDescription' + index + '" name="NameDescription">').appendTo('descriptions');
+            $(' <label for="Description' + index + '" id="labelDescription' + index + '">Описание: </label>').appendTo('descriptions');
+            $(' <input type="text" id="Description' + index + '" name="Description">').appendTo('descriptions');
+            $(' <input type="button" id="' + index + '" value="Удалить" onclick="DeleteDescription(' + index + ')"><br id="br' + index + '"/>').appendTo('descriptions');
+        });
+    });
+    function DeleteDescription(id) {
+        console.log(id);
+        $('#labelNameDescription' + id).remove();
+        $('#NameDescription' + id).remove();
+        $('#labelDescription' + id).remove();
+        $('#Description' + id).remove();
+        $('#' + id).remove();
+        $('#br' + id).remove();
+    }
+    function IsValid() {
+        var name = $("#Name").val();
+        var date = $("#Date").val();
+        var errorStr = "";
+        if ((name == null) || (name == "")) {
+            errorStr += "Поле наименования модели должно быть заполненно. ";
+        }
+        if ((date == null) || (date == "")) {
+            errorStr += "Заполните поле даты. ";
+        } else {
+            var result = date.match(pattern);
+            if (result == null) {
+                errorStr += "Дата не соответствует формату. ";
+            }
+        }
+        for (var i = 1; i <= index; i++) {
+            if ($('input').is('#NameDescription' + i)) {
+                var NameDescription = $('#NameDescription' + i).val();
+                var Description = $('#Description' + i).val();
+                if ((NameDescription == null) || (NameDescription == "")) {
+                    errorStr += "Все наименования описания должны быть заполенны.";
+                    break;
+                }
+                if ((Description == null) || (Description == "")) {
+                    errorStr += "Все описания должны быть заполенны.";
+                    break;
+                }
+            }
+        }
+        console.log(errorStr);
+        if (errorStr == "") {
+            return true;
+        } else {
+            $('#error').empty();
+            $('#error').append(errorStr);
+            return false;
+        }
+    }
+</script>

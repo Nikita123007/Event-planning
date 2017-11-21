@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Настройки";
+}
+@model EventPlanning.Models.SettingAndUsersModel
+@using EventPlanning.Models
+
+<p style="color: red">
+    @ViewData["Message"]
+</p>
+<div class="alert-info" role="alert">
+    @using (Html.BeginForm("UpdateSetting", "Home", FormMethod.Post))
+    {
+        @Html.HiddenFor(m => m.Setting.Id)
+        @Html.LabelFor(m => m.Setting.SendEmail)
+        @Html.TextBoxFor(m => m.Setting.SendEmail)<br>
+        @Html.LabelFor(m => m.Setting.SendPassword)
+        @Html.TextBoxFor(m => m.Setting.SendPassword)<br>
+        @Html.LabelFor(m => m.Setting.AutocastingHours)
+        @Html.TextBoxFor(m => m.Setting.AutocastingHours)<br>
+        @Html.LabelFor(m => m.Setting.HoursAtRemove)
+        @Html.TextBoxFor(m => m.Setting.HoursAtRemove)<br>
+        <input type="submit" value="Обновить">
+    }<br>
+</div>
+<div class="alert-success" role="alert">
+    Зарегистрированные пользователи:<br><br>
+    @foreach (UserRegisterData user in Model.Users)
+    {
+        <p> Имя: @user.Name, Фамилия: @user.Suname, Возраст: @user.Age, Почта: @user.Email, Пароль: @user.Password <a href="/Home/DeleteUserRegister/@user.Id"> Удалить пользователя </a><a href="/Home/AddInBlackListUserRegister/@user.Id"> Добавить в чс сайта </a></p>
+    }<br>
+</div>
+<div class="alert-danger" role="alert">
+    Email адреса находящиеся в чёрном списке:<br><br>
+    @foreach (UserEmail user in Model.Setting.EmailsInBlackList)
+    {
+        <p>Почта: @user.Email <a href="/Home/DeleteWithBLUserRegister/@user.Id"> Убрать из чс </a></p>
+    }
+</div>
+

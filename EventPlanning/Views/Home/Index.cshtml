@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<form onsubmit="return false">
+    <label for="name">Событие: </label>
+    <input type="text" id="name" name="name" /><br>
+    <label for="date">Дата: </label>
+    <input type="date" id="date" name="date" /><br>
+    <input type="submit" id="Search" value="Поиск" />
+</form>
+<br /><br />
+@if ((string)ViewData["admin"] == "true")
+{
+    @ViewData["registerEvent"]
+    <br /><a href="/Home/CreateNewEvent">Создать новое событие</a>
+}
+<events id="events">
+@Html.Partial("EventSearch")
+</events>
+<script type="text/javascript">
+    $(function(){
+        $('#Search').on('click', function (e) {
+            var nameValue = $("#name").val();
+            var dateValue = $("#date").val();
+            var url = document.location.href.split("/");
+            var startURL = url[0] + "/" + url[1] + "/" + url[2];
+            $.ajax({
+                url: startURL+"/Home/EventSearch",
+                type: "POST",
+                data: ({ name: nameValue, date: dateValue }),
+                success: InsertPartialView
+            });
+        });
+    });
+    function InsertPartialView(data) {
+        $('#events').empty();
+        $('#events').append(data);
+    }
+</script>

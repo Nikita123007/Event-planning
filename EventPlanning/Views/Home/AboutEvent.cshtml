@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "Event";
+}
+@model EventPlanning.Models.EventAndUsersModel
+@using EventPlanning.Models
+
+<div class="alert-info" role="alert">
+<p>Наиманование события: @Model.Event.Name</p>
+<p>Дата события: @Model.Event.Date</p>
+@if (Model.Event.EventDescriptions.Count() > 0)
+{
+    foreach(EventDescription elem in Model.Event.EventDescriptions)
+    {
+        <p>@elem.Name : @elem.Description</p>
+    }
+}
+</div>
+@if ((string)ViewData["admin"] == "false")
+{
+    if ((string)ViewData["IsBlackList"] == "false")
+    {
+        if ((string)ViewData["registered"] == "true")
+        {
+        <p>Вы подписаны на данное событие.</p><br />
+        <p><a href="/Home/UnRegisterOnEvent/@Model.Event.Id">Отписаться</a></p><br />
+        }
+        else
+        {
+            if ((string)ViewData["LimitUsers"] == "false")
+            {
+                <p>Вы не подписаны на данное событие.</p><br />
+                <p><a href="/Home/RegisterOnEvent/@Model.Event.Id">Подписаться</a></p><br />
+            }
+            else
+            {
+                <p>На данное событие подписанно максимальное кол-во пользователей. Вы подписаться не можете.</p>
+            }
+        }
+    }
+    else
+    {
+        <p>Вы занесены в чс в данном событии.</p><br />
+    }
+}
+else
+{
+    <p>Максимальное кол-во подписчиков: @Model.Event.MaxUsers</p>
+    <p><a href="/Home/DeleteEvent/@Model.Event.Id">Удалить</a></p>
+    <p><a href="/Home/EditEvent/@Model.Event.Id">Редактировать</a></p><br>
+    <div class="alert-success" role="alert">
+        <p>Пользователи подписанные на данное событие:</p>
+        @foreach (User user in Model.Event.Users)
+        {
+            <p> Имя: @Model.Users.Where(elem => elem.Email == user.Name).First().Name, Фамилия: @Model.Users.Where(elem => elem.Email == user.Name).First().Suname, Возраст: @Model.Users.Where(elem => elem.Email == user.Name).First().Age, Почта: @Model.Users.Where(elem => elem.Email == user.Name).First().Email, Пароль: @Model.Users.Where(elem => elem.Email == user.Name).First().Password <a href="/Home/DeleteUser/@user.Id"> Отписать </a><a href="/Home/AddInBlackListUser/@user.Id"> Добавить в чс </a></p><br />
+        }
+    </div><br />
+    <div class="alert-danger" role="alert">
+        <p>Пользователи находящиеся в чс на данное событие:</p>
+        @foreach (User user in Model.Event.BlackListUsers)
+        {
+            <p> Имя: @Model.Users.Where(elem => elem.Email == user.Name).First().Name, Фамилия: @Model.Users.Where(elem => elem.Email == user.Name).First().Suname, Возраст: @Model.Users.Where(elem => elem.Email == user.Name).First().Age, Почта: @Model.Users.Where(elem => elem.Email == user.Name).First().Email, Пароль: @Model.Users.Where(elem => elem.Email == user.Name).First().Password <a href="/Home/DeleteUserWithBlackList/@user.Id"> Убрать из чс. </a></p>
+        }
+    </div>
+}
